@@ -1,0 +1,19 @@
+{
+	"name": "m2pong",
+	"version": "0.0.1",
+	"author": "Philip Taffner <philip.taffner@bluegfx.de>",
+	"description": "multi mobile pong",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sabl0r/m2pong.git"
+	},
+	"keywords": [
+		"game"
+	],
+	"dependencies": {
+		"send": "0.1.x",
+		"websocket": "1.0.x"
+	},
+	"license": "MIT",
+	"engines": ">=0.10.0"
+}
