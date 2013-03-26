@@ -1,0 +1,56 @@
+@import url("/common/normalize.css");
+
+* {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+html,
+body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+}
+
+#playground {
+	height: 100%;
+	background: #000;
+}
+
+#divider {
+	position: absolute;
+	left: 50%;
+	height: 100%;
+	width: 30px;
+	margin-left: -15px;
+	background: #fff;
+}
+
+div.ball {
+	position: relative;
+	background: #fff;
+	width: 50px;
+	height: 50px;
+	border-radius: 25px;
+}
+
+div.player {
+	position: absolute;
+	width: 20px;
+	height: 100px;
+	background: #fff;
+}
+
+#player_0 {
+	left: 0;
+	top: 50%;
+	margin-top: -50px;
+}
+
+#player_1 {
+	right: 0;
+	top: 50%;
+	margin-top: -50px;
+}
