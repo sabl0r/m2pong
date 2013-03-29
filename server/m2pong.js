@@ -1,4 +1,5 @@
 
+var _ = require('underscore');
 var WebSocketServer = require('websocket').server;
 var Display = require('./display.js').Display;
 var Player = require('./player.js').Player;
@@ -9,23 +10,29 @@ exports.config = {
 	maxPlayers: 2
 };
 
-var msgHandlers = {
-	joinGame: joinGame
-};
-
 var display_connection_id = 0;
 var client_connection_id = 0;
 
 var displays = [];
 
-var players = [];
-var players_positions = [ 0, 1 ];
+var players = {};
+var players_numbers = [ 0, 1 ];
+var players_positions = {
+	'0': {
+		x: 0,
+		y: 50
+	},
+	'1': {
+		x: 100,
+		y: 50
+	}
+};
 
 var balls = [];
 
 var timer = null;
 
-function start(httpServer){
+exports.start = function(httpServer){
 	
 	var wsServer = new WebSocketServer({
 		httpServer: httpServer
@@ -40,13 +47,12 @@ function start(httpServer){
 			connection = request.accept(null, request.origin);
 			connection.type = 'display';
 			connection.id = display_connection_id++;
-			displays.push(new Display(connection));
-
+			
 			console.log('New display connection accepted.');
 
 		} else if(request.requestedProtocols[0] === 'm2pong-client'){
 
-			if(players.length === exports.config.maxPlayers){
+			if(_(players).size() === exports.config.maxPlayers){
 				request.reject(503, 'Too much players.');
 				return;
 			}
@@ -63,17 +69,22 @@ function start(httpServer){
 		}
 
 		connection.on('message', function(msg){
+
 			console.log('Received Message: ' + msg.utf8Data);
+
 			var result = JSON.parse(msg.utf8Data);
-			var h = msgHandlers[result.type];
+			var h = messageHandlers[result.type];
+
 			if(h){
 				h(connection, result.data);
 			} else {
 				console.log('Can\'t handle message of type ' + result.type + '.');
 			}
+
 		});
 
 		connection.on('close', function(reasonCode, description) {
+
 			if(connection.type === 'display'){
 				removeDisplay(connection.id);
 			} else if(connection.type === 'client'){
@@ -81,43 +92,83 @@ function start(httpServer){
 			}
 
 			console.log(connection.type.charAt(0).toUpperCase() + connection.type.slice(1) + ' (' + connection.remoteAddress + ') disconnected.');
+			
 		});
 
 	});
 
-}
+};
 
-function sendToDisplays(type, data){
+exports.sendToDisplays = function(type, data){
 
-	displays.forEach(function(display){
+	_(displays).each(function(display){
 		display.connection.send(JSON.stringify({
 			type: type,
 			data: data
 		}));
 	});
 
-}
+};
 
-function joinGame(connection, data){
+var messageHandlers = {
 
-	var position = players_positions.shift();
-	players.push(new Player(connection, data.name, position));
+	registerDisplay: function(connection, data){
 
-	sendToDisplays('addPlayer', {
-		position: position,
-		name: data.name
-	});
+		displays.push(new Display(connection, data.viewport.width, data.viewport.height));
 
-	// start game
-	if(players.length === 2){
-		startGame();
+	},
+
+	joinGame: function (connection, data){
+
+		var nr = players_numbers.shift();
+		players[nr] = new Player(connection, data.name, nr);
+
+		exports.sendToDisplays('addPlayer', {
+			nr: nr,
+			name: data.name
+		});
+
+		players[nr].move(players_positions[nr].x, players_positions[nr].y);
+
+		connection.send(JSON.stringify({
+			type: 'playerJoined',
+			data: {
+				nr: nr
+			}
+		}));
+
+		// start game
+		if(_(players).size() === 2){
+			startGame();
+		}
+
+	},
+			
+	playerMoveUp: function(connection, data){
+
+		if(players[data.nr].y === 0){
+			return;
+		}
+
+		players[data.nr].move(players[data.nr].x, players[data.nr].y - 1);
+
+	},
+
+	playerMoveDown: function(connection, data){
+
+		if(players[data.nr].y === 100){
+			return;
+		}
+
+		players[data.nr].move(players[data.nr].x, players[data.nr].y + 1);
+
 	}
 
-}
+};
 
 function removeDisplay(id){
 
-	displays.forEach(function(d, i){
+	_(displays).each(function(d, i){
 
 		if(d.connection.id === id){
 			displays.splice(i, 1);
@@ -130,21 +181,22 @@ function removeDisplay(id){
 
 function removePlayer(id){
 
-	players.forEach(function(p, i){
-		
+	_(players).each(function(p, i){
+				
 		if(p.connection.id === id){
-			sendToDisplays('removePlayer', {
-				position: p.position
+			exports.sendToDisplays('removePlayer', {
+				nr: p.nr
 			});
 
-			players_positions.push(p.position);
-			players_positions.sort();
-			players.splice(i, 1);
+			players_numbers.push(p.nr);
+			players_numbers.sort();
+			delete players[i];
 			return;
 		}
+		
 	});
 
-	if(players.length < exports.config.minPlayers){
+	if(_(players).size() < exports.config.minPlayers){
 		stopGame();
 	}
 
@@ -155,7 +207,7 @@ function addBall(x, y){
 	var ball = new Ball(balls.length, x, y);
 	balls.push(ball);
 
-	sendToDisplays('addBall', {
+	exports.sendToDisplays('addBall', {
 		x: x,
 		y: y
 	});
@@ -171,23 +223,20 @@ function removeBall(id){
 }
 
 function startGame(){
-
+	return;
 	var ball = addBall(0, 0);
 
 	timer = setInterval(function(){
 		ball.move(ball.x + 5, ball.y);
-	}, 100);
+	}, 10);
 
 }
 
 function stopGame(){
 
 	clearInterval(timer);
-	balls.forEach(function(b, i){
+	_(balls).each(function(b, i){
 		removeBall(i);
 	});
 
 }
-
-exports.start = start;
-exports.sendToDisplays = sendToDisplays;

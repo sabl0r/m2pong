@@ -11,14 +11,14 @@ $.Class('m2pong.Player', {
 
 		this._options = {
 			
-			position: 1,
+			nr: null,
 
 			name: null
 	
 		};
 		$.extend(true, this._options, options || {});
 		
-		this._element = $('<div class="player" id="player_' + this._options.position + '"></div>').appendTo('body');
+		this._element = $('<div class="player" id="player_' + this._options.nr + '"></div>').appendTo('body');
 		//this._label = $('<div class="player_label" id="player_label_' + this._options.position + '">' + this._options.name + '</div>').appendTo('body');
 		
 	},
@@ -29,10 +29,11 @@ $.Class('m2pong.Player', {
 
 	},
 
-	move: function(pos){
+	move: function(x, y){
 
 		this._element.css({
-			top: pos
+			left: x + '%',
+			top: y + '%'
 		});
 
 	}

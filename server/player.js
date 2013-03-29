@@ -1,9 +1,27 @@
 
-Player = function(connection, name, position){
+var m2pong = require('./m2pong');
+
+Player = function(connection, name, nr){
 
 	this.connection = connection;
 	this.name = name;
-	this.position = position;
+	this.nr = nr;
+
+	this.x = 0;
+	this.y = 0;
+
+	this.move = function(x, y){
+
+		this.x = x;
+		this.y = y;
+
+		m2pong.sendToDisplays('movePlayer', {
+			nr: this.nr,
+			x: this.x,
+			y: this.y
+		});
+
+	};
 
 };
 

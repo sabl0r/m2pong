@@ -39,18 +39,11 @@ div.ball {
 div.player {
 	position: absolute;
 	width: 20px;
-	height: 100px;
+	height: 10vh;
+	margin-top: -5vh;
 	background: #fff;
 }
 
-#player_0 {
-	left: 0;
-	top: 50%;
-	margin-top: -50px;
-}
-
 #player_1 {
-	right: 0;
-	top: 50%;
-	margin-top: -50px;
+	margin-left: -20px;
 }

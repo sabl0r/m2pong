@@ -29,70 +29,68 @@ $.Class('m2pong.Display', {
 	},
 
 	_initConnection: function(e){
+
+		this._ws.send('registerDisplay', {
+			viewport: {
+				width: $(window).width(),
+				height: $(window).height()
+			}
+		});
+
 	},
 
 	_receiveMessage: function(e){
 
 		var result = JSON.parse(e.originalEvent.data);
-		switch(result.type){
-			case 'initGame':
-				break;
-			case 'addPlayer':
-				this.addPlayer(result.data.position, result.data.name);
-				break;
-			case 'removePlayer':
-				this.removePlayer(result.data.position);
-				break;
-			case 'addBall':
-				this.addBall(result.data.x, result.data.y);
-				break;
-			case 'removeBall':
-				this.removeBall(result.data.id);
-				break;
-			case 'moveBall':
-				this.moveBall(result.data.id, result.data.x, result.data.y);
-				break;
-			default:
-				console.log('Unknown answer from server.');
-				break;
+		console.log(result);
+		if(this[result.type]){
+			this[result.type](result.data);
+		} else {
+			console.log('Unknown message from server.');
 		}
 		
 	},
 
-	addPlayer: function(position, name){
+	addPlayer: function(data){
 
-		this._players[position] = new m2pong.Player({
-			position: position,
-			name: name
+		this._players[data.nr] = new m2pong.Player({
+			nr: data.nr,
+			name: data.name
 		});
 
 	},
 
-	removePlayer: function(position){
+	removePlayer: function(data){
 
-		this._players[position].destroy();
-		delete this._players[position];
+		this._players[data.nr] && this._players[data.nr].destroy();
+		delete this._players[data.nr];
 
 	},
 
-	addBall: function(x, y){
+	movePlayer: function(data){
+
+		this._players[data.nr].move(data.x, data.y);
+
+	},
+
+	addBall: function(data){
 
 		this._balls.push(new m2pong.Ball({
-			x: x,
-			y: y
+			x: data.x,
+			y: data.y
 		}));
 
 	},
 
-	removeBall: function(id){
+	removeBall: function(data){
 
-		this._balls.splice(id, 1)[0].destroy();
+		this._balls.splice(data.id, 1)[0].destroy();
 
 	},
 
-	moveBall: function(id, x, y){
+	moveBall: function(data){
 
-		this._balls[id].move(x, y);
+		this._balls[data.id].move(data.x, data.y);
 
 	}
 
