@@ -10,10 +10,12 @@
 	"keywords": [
 		"game"
 	],
+	"license": "MIT",
+	"engines": ">=0.10.0",
 	"dependencies": {
 		"send": "0.1.x",
-		"websocket": "1.0.x"
+		"websocket": "1.0.x",
+		"underscore": "1.4.x"
 	},
-	"license": "MIT",
-	"engines": ">=0.10.0"
+	"main": "index"
 }
