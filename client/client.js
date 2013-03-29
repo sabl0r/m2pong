@@ -5,6 +5,16 @@ $.Class('m2pong.Client', {
 
 	init: function(options){
 
+		if(!m2pong.config.debug){
+			console.log = function(){};
+		}
+
+		if(!this._isBrowserSupported()){
+			var download = this._isAndroid() ? ' like <a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Firefox</a> or <a href="https://play.google.com/store/apps/details?id=com.android.chrome">Chrome</a>' : '';
+			$('body').html('<div id="error">Your browser is not supported. Please use a decent browser' + download + '.</div>');
+			return;
+		}
+
 		this._options = {
 		};
 		$.extend(true, this._options, options || {});
@@ -14,7 +24,7 @@ $.Class('m2pong.Client', {
 		// Init websocket
 		this._ws = $.websocket('ws://' + location.host, {
 			open: $.proxy(this._initConnection, this),
-			error: $.proxy(this._handleError, this),
+			close: $.proxy(this._connectionClosed, this),
 			message: $.proxy(this._receiveMessage, this)
 		}, 'm2pong-client');
 
@@ -28,13 +38,42 @@ $.Class('m2pong.Client', {
 				e.preventDefault();
 			}
 
-		}, this));
+		}, this));	
+
+		this._longClick($('#up'), this._moveUp);
+		this._longClick($('#down'), this._moveDown);
 
 	},
 
-	_handleError: function(e){
+	_longClick: function(el, f){
 
-		console.log(e);
+		var timeout = 0;
+		el.on('vmousedown', $.proxy(function(e) {
+			timeout = setInterval($.proxy(function(){
+				f.call(this);
+				e.preventDefault();
+			}, this), 50);
+		}, this)).on('vmouseup', function(e){
+			clearInterval(timeout);
+		});
+
+	},
+
+	_isBrowserSupported: function(){
+
+		return Modernizr.websockets && Modernizr.cssvhunit && Modernizr.cssvwunit;
+
+	},
+
+	_isAndroid: function(){
+
+		return navigator.userAgent.toLowerCase().indexOf('android') > -1;
+
+	},
+
+	_connectionClosed: function(e){
+
+		$('body').html('<div id="error">Connection lost. Please reload.</div>');
 		
 	},
 

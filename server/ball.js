@@ -6,6 +6,9 @@ Ball = function(id, x, y){
 	this.id = id;
 	this.x = x;
 	this.y = y;
+	
+	this.width = 2;
+	this.height = 2;
 
 	this.move = function(x, y){
 		this.x = x;

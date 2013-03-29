@@ -13,23 +13,27 @@ body {
 
 body {
 	margin: 0;
+	background: #000;
+	color: #fff;
 }
 
 #controls {
 	height: 100%;
-	background: #000;
 }
 
 div.button {
 	position: relative;
 	height: 50%;
 	border: 1px solid #fff;
+	cursor: pointer;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 div.button span {
 	display: inline-block;
 	position: absolute;
-	color: #fff;
 	font-size: 30vh;
 	top: 50%;
 	left: 50%;
@@ -37,4 +41,12 @@ div.button span {
 	line-height: 30vh;
 	width: 30vh;
 	margin: -15vh 0 0 -15vh;
+}
+
+#error {
+	position: absolute;
+	top: 25%;
+	width: 100%;
+	font-size: 15vw;
+	text-align: center;
 }

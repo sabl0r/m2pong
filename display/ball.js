@@ -30,8 +30,8 @@ $.Class('m2pong.Ball', {
 		this.y = y;
 
 		this._element.css({
-			left: x,
-			top: y
+			left: x + "vw",
+			top: y + "vh"
 		});
 
 	}

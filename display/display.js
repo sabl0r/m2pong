@@ -5,6 +5,10 @@ $.Class('m2pong.Display', {
 
 	init: function(options){
 
+		if(!m2pong.config.debug){
+			console.log = function(){};
+		}
+
 		this._options = {
 		};
 		$.extend(true, this._options, options || {});
@@ -16,15 +20,15 @@ $.Class('m2pong.Display', {
 		// Init websocket
 		this._ws = $.websocket('ws://' + location.host, {
 			open: $.proxy(this._initConnection, this),
-			error: $.proxy(this._handleError, this),
+			close: $.proxy(this._connectionClosed, this),
 			message: $.proxy(this._receiveMessage, this)
 		}, 'm2pong-display');
 						
 	},
 
-	_handleError: function(e){
+	_connectionClosed: function(e){
 
-		console.log(e);
+		$('body').html('<div id="connection_lost">Connection lost. Please reload.</div>');
 		
 	},
 
@@ -55,7 +59,9 @@ $.Class('m2pong.Display', {
 
 		this._players[data.nr] = new m2pong.Player({
 			nr: data.nr,
-			name: data.name
+			name: data.name,
+			width: data.width,
+			height: data.height
 		});
 
 	},
@@ -91,6 +97,12 @@ $.Class('m2pong.Display', {
 	moveBall: function(data){
 
 		this._balls[data.id].move(data.x, data.y);
+
+	},
+
+	setScore: function(data){
+
+		this._players[data.nr].setScore(data.score);
 
 	}
 
