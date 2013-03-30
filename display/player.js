@@ -53,6 +53,12 @@ $.Class('m2pong.Player', {
 		this.score = score;
 		this._label.text(this._options.name + ' (' + this.score + ')');
 
+	},
+
+	getName: function(){
+
+		return this._options.name;
+
 	}
 
 });

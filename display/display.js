@@ -76,6 +76,7 @@ $.Class('m2pong.Display', {
 
 		this._players[data.nr] && this._players.splice(data.nr, 1)[0].destroy();
 		$('#qr').show();
+		$('#winner').remove();
 
 	},
 
@@ -109,6 +110,12 @@ $.Class('m2pong.Display', {
 	setScore: function(data){
 
 		this._players[data.nr] && this._players[data.nr].setScore(data.score);
+
+	},
+
+	winGame: function(data){
+
+		$('<div id="winner">\\o/ ' + this._players[data.nr].getName() + ' wins the game.<br />Congratulations! \\o/</div>').appendTo('body');
 
 	}
 

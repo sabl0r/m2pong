@@ -3,7 +3,9 @@ var m2pong = m2pong || {};
 
 m2pong.config = {
 
-	debug: true
+	debug: true,
+
+	winPoints: 15
 
 };
 

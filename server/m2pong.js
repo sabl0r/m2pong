@@ -227,6 +227,9 @@ function removePlayer(nr, connection_id){
 
 	if(_(players).size() < exports.config.minPlayers){
 		stopGame();
+		
+		// reset scores
+		resetScores();
 	}
 
 }
@@ -279,11 +282,6 @@ function stopGame(){
 		removeBall(i);
 	});
 
-	// reset scores
-	_(players).each(function(p){
-		p.setScore(0);
-	});
-
 	console.log('Game stopped.');
 
 }
@@ -303,6 +301,22 @@ function restartGame(){
 
 	resetGame();
 	startGame();
+
+}
+
+function winGame(p){
+
+	exports.sendToDisplays('winGame', {
+		nr: p.nr
+	});
+
+}
+
+function resetScores(){
+
+	_(players).each(function(p){
+		p.setScore(0);
+	});
 
 }
 
@@ -328,12 +342,22 @@ function startRound(){
 		// player 0 misses
 		if(ball.x <= 0){
 			players[1].setScore(players[1].score + 1);
+			if(players[1].score === Config.winPoints){
+				stopGame();
+				winGame(players[1]);
+				return;
+			}
 			newRound();
 		}
 
 		// player 1 misses
 		if(ball.x >= 100 - ball.width){
 			players[0].setScore(players[0].score + 1);
+			if(players[0].score === Config.winPoints){
+				stopGame();
+				winGame(players[0]);
+				return;
+			}
 			newRound();
 		}
 
