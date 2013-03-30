@@ -23,7 +23,7 @@ $.Class('m2pong.Client', {
 
 		// Init websocket
 		this._ws = $.websocket('ws://' + location.host, {
-			open: $.proxy(this._initConnection, this),
+			open: $.proxy(this._joinGame, this),
 			close: $.proxy(this._connectionClosed, this),
 			message: $.proxy(this._receiveMessage, this)
 		}, 'm2pong-client');
@@ -89,7 +89,7 @@ $.Class('m2pong.Client', {
 		
 	},
 
-	_initConnection: function(e){
+	_joinGame: function(e){
 
 		var names = ['Mare', 'Babse', 'Vrenal', 'Traudl', 'Rosi', 'Hans', 'Sepp', 'Schorsch', 'Anda', 'Girgl'];
 		var pos = Math.floor(Math.random() * names.length);
@@ -114,6 +114,12 @@ $.Class('m2pong.Client', {
 	playerJoined: function(data){
 
 		this.nr = data.nr;
+
+	},
+
+	changeName: function(data){
+
+		this._joinGame();
 
 	},
 

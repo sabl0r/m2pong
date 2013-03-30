@@ -59,7 +59,7 @@ $.Class('m2pong.Display', {
 
 	addPlayer: function(data){
 
-		if(this._players.length === 1){
+		if(this._players.length <= 1){
 			$('#qr').hide();
 		}
 
@@ -81,7 +81,7 @@ $.Class('m2pong.Display', {
 
 	movePlayer: function(data){
 
-		this._players[data.nr].move(data.x, data.y);
+		this._players[data.nr] && this._players[data.nr].move(data.x, data.y);
 
 	},
 
@@ -108,7 +108,7 @@ $.Class('m2pong.Display', {
 
 	setScore: function(data){
 
-		this._players[data.nr].setScore(data.score);
+		this._players[data.nr] && this._players[data.nr].setScore(data.score);
 
 	}
 

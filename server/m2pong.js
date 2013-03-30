@@ -129,6 +129,14 @@ var messageHandlers = {
 
 	joinGame: function (connection, data){
 
+		if(_(players).chain().pluck('name').contains(data.name).value()){
+			connection.send(JSON.stringify({
+				type: 'changeName',
+				data: {}
+			}));
+			return;
+		}
+
 		var nr = players_numbers.shift();
 		players[nr] = new Player(connection, data.name, nr);
 
