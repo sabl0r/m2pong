@@ -30,8 +30,8 @@ $.Class('m2pong.Display', {
 
 	_connectionClosed: function(e){
 
-		$('body').html('<div id="connection_lost">Connection lost. Please reload.</div>');
-		
+		$('body').html('<div id="error">Connection lost. Please reload.</div>');
+
 	},
 
 	_initConnection: function(e){

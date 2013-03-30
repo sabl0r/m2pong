@@ -85,7 +85,14 @@ $.Class('m2pong.Client', {
 
 	_connectionClosed: function(e){
 
-		$('body').html('<div id="error">Connection lost. Please reload.</div>');
+		var msg = '';
+		if(e.originalEvent.code === 1006){
+			msg = 'Too many players. Please try again later.';
+		} else {
+			msg = 'Connection lost. Please reload.';
+		}
+
+		$('body').html('<div id="error">' + msg + '</div>');
 		
 	},
 

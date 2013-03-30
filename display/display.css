@@ -55,7 +55,7 @@ div.player_label {
 	left: 50%;
 }
 
-#connection_lost {
+#error {
 	position: absolute;
 	top: 15%;
 	width: 100%;

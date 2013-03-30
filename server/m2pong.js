@@ -62,7 +62,7 @@ exports.start = function(httpServer){
 		} else if(request.requestedProtocols[0] === 'm2pong-client'){
 
 			if(_(players).size() === exports.config.maxPlayers){
-				request.reject(503, 'Too much players.');
+				request.reject(503, 'Too many players. Please try again later.');
 				return;
 			}
 
