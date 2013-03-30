@@ -40,9 +40,21 @@ $.Class('m2pong.Client', {
 
 		}, this));	
 
-		this._longClick($('#up'), this._moveUp);
-		this._longClick($('#down'), this._moveDown);
+		// touch hold and click events
+		this._longClick($('#up span'), this._moveUp);
+		this._longClick($('#down span'), this._moveDown);
 
+		// touch move events
+		$(document).on('move', $.proxy(function(e){
+
+			if(Math.abs(e.deltaY) < 2){
+				return;
+			}
+
+			e.pageY < e.startY ? this._moveUp() : this._moveDown();
+			
+		}, this));
+		
 	},
 
 	_longClick: function(el, f){
