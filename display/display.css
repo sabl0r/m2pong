@@ -62,3 +62,25 @@ div.player_label {
 	font-size: 15vw;
 	text-align: center;
 }
+
+#qr {
+	position: absolute;
+	left: 50%;
+	top: 25%;
+	width: 266px;
+	height: 266px;
+	margin-left: -128px;
+	font-size: 0;
+}
+
+#qr div.code {
+	background: #ccc;
+	padding: 5px;
+}
+
+#qr div.qr_label {
+	text-align: center;
+	font-size: 2vw;
+	background: #000;
+	padding: 5px;
+}

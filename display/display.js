@@ -23,7 +23,9 @@ $.Class('m2pong.Display', {
 			close: $.proxy(this._connectionClosed, this),
 			message: $.proxy(this._receiveMessage, this)
 		}, 'm2pong-display');
-						
+
+		$('#qr div.code').qrcode('http://' + location.host);
+
 	},
 
 	_connectionClosed: function(e){
@@ -57,6 +59,10 @@ $.Class('m2pong.Display', {
 
 	addPlayer: function(data){
 
+		if(this._players.length === 1){
+			$('#qr').hide();
+		}
+
 		this._players[data.nr] = new m2pong.Player({
 			nr: data.nr,
 			name: data.name,
@@ -68,8 +74,8 @@ $.Class('m2pong.Display', {
 
 	removePlayer: function(data){
 
-		this._players[data.nr] && this._players[data.nr].destroy();
-		delete this._players[data.nr];
+		this._players[data.nr] && this._players.splice(data.nr, 1)[0].destroy();
+		$('#qr').show();
 
 	},
 
